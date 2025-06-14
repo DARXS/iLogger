@@ -63,7 +63,7 @@ O projeto adota uma arquitetura desacoplada, similar ao padrão Model-View-Contr
 #### Arquivos Raiz
 
 -   **`main.py`**: O ponto de entrada da aplicação. Sua única responsabilidade é instanciar a `QApplication` e a `MainWindow`, e iniciar o loop de eventos da aplicação.
--   **`config.py`**: Arquivo de configuração centralizado. Define constantes globais como o nome e versão da aplicação, constantes físicas (ex: $g = 9.81 m/s^2$), parâmetros padrão para os filtros digitais e outras configurações estáticas para evitar "magic numbers" no código.
+-   **`config.py`**: Arquivo de configuração centralizado. Define constantes globais como o nome e versão da aplicação, constantes físicas (ex: $g = 9.81 m/s^2$), parâmetros padrão para os filtros digitais e outras configurações estáticas.
 -   **`requirements.txt`**: Documento que especifica todas as dependências externas do projeto, permitindo a fácil recriação do ambiente de execução com `pip install -r requirements.txt`.
 
 #### Diretório `data/`

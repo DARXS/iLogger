@@ -15,7 +15,8 @@ O sistema transforma arquivos de dados brutos `.csv` em um dashboard interativo,
     -   Savitzky-Golay
     -   Filtro de Mediana
     -   Média Móvel
-    A aplicação dos filtros é não destrutiva, ocorrendo na camada de visualização e permitindo o ajuste dinâmico de parâmetros (ordem, frequência de corte, etc.) com atualização instantânea do gráfico.
+
+A aplicação dos filtros é não destrutiva, ocorrendo na camada de visualização e permitindo o ajuste dinâmico de parâmetros (ordem, frequência de corte, etc.) com atualização instantânea do gráfico.
 
 -   **Visualização de Dados Dinâmica com `pyqtgraph`**: Utiliza a biblioteca `pyqtgraph`, otimizada para aplicações científicas e de engenharia, para renderizar gráficos interativos de alta performance. As visualizações incluem séries temporais, gráficos de dispersão (XY) e painéis de dashboard compostos.
 

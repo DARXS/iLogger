@@ -38,7 +38,6 @@ class RunData:
         self._calculate_raw_data()
 
     def _load_data(self, file_path: str) -> pd.DataFrame:
-        # ... (código existente sem alterações)
         df = pd.read_csv(file_path, engine='c')
         required_cols = {'f1', 'f2'}
         if not required_cols.issubset(df.columns):
@@ -50,7 +49,6 @@ class RunData:
         return df
 
     def _calculate_raw_data(self):
-        # ... (código existente sem alterações)
         f1 = self.df_raw['f1'].values.astype(float)
         f2 = self.df_raw['f2'].values.astype(float)
 
@@ -93,7 +91,6 @@ class RunData:
         vel_ms = self.velocity_raw_kmh * (5 / 18)
         filter_type = filter_settings.get('type', 'butterworth')
 
-        # ... (lógica de filtragem existente, sem alterações)
         savgol_window = filter_settings.get('savgol_window', SAVGOL_WINDOW)
         if filter_type == 'savitzky_golay' and len(self.rpm_raw) <= savgol_window:
             return
@@ -153,7 +150,6 @@ class RunData:
         
         self._calculate_statistics()
     
-    # ... (resto do arquivo sem alterações)
     def _calculate_statistics(self):
         """Recalcula as estatísticas com base nos dados filtrados mais recentes."""
         vel_kmh = self.velocity_filtered_kmh

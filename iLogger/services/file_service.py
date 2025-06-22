@@ -53,8 +53,6 @@ def _create_scatter_chart(workbook, data_sheet_name, run_names, rows_per_run, x_
     chart.set_size({'width': 720, 'height': 420})
     return chart
 
-# A função _create_bar_chart foi removida por não ser mais necessária.
-
 # --- FUNÇÃO PRINCIPAL DE EXPORTAÇÃO ---
 
 def export_to_dashboard_excel(runs: list[RunData], save_path: str, metrics_df: pd.DataFrame, variations_df: pd.DataFrame, filter_settings: dict, setup_info: dict, observations: str):
@@ -138,9 +136,7 @@ def export_to_dashboard_excel(runs: list[RunData], save_path: str, metrics_df: p
             charts['rpm'] = _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, 'B', 'D', 'RPM Comparativo', 'RPM')
             charts['acel'] = _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, 'B', 'E', 'Aceleração Comparativa', 'Aceleração (m/s²)')
             charts['dist'] = _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, 'B', 'F', 'Distância Percorrida', 'Distância (m)')
-            # CORREÇÃO: Eixos do gráfico de CVT (RPM x Velocidade) invertidos conforme solicitado.
             charts['rpm_vel'] = _create_scatter_chart(workbook, data_sheet_name, run_names, rows_per_run, 'C', 'D', 'Relação RPM x Velocidade', 'Velocidade (km/h)', 'RPM')
-            # O gráfico de barras foi removido.
             
             # 4. Montar o Dashboard
             sheet3.write('A1', 'Dashboard de Análise de Desempenho', workbook.add_format({'bold': True, 'font_size': 20, 'font_color': '#333333'}))

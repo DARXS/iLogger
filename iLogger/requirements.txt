@@ -1,13 +1,20 @@
-# Main application framework
-PyQt6==6.6.1
-qt-material==6.0.4
+# requirements.txt
 
-# Data processing and scientific computing
-numpy==1.26.4
-pandas==2.2.1
-scipy==1.12.0
+# Estrutura e manipulação de dados
+pandas
 
-# Plotting and Reporting
-pyqtgraph==0.13.3
-matplotlib==3.8.3
-XlsxWriter==3.2.0
+# Cálculos numéricos e científicos
+numpy
+scipy
+
+# Geração de gráficos (usado na lógica de plotagem original e pode ser útil no futuro)
+matplotlib
+
+# Framework da Interface Gráfica
+PyQt6
+
+# Temas e Estilos para a Interface
+qt_material
+
+# Motor para a criação de arquivos Excel (.xlsx) com formatação
+XlsxWriter

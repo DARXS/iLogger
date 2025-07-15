@@ -4,14 +4,71 @@ import os
 import glob
 import pandas as pd
 import traceback
+import ctypes
 from PyQt6.QtWidgets import QMessageBox
 from data.run_data import RunData
 from config import *
 
-# --- FUNÇÕES AUXILIARES PARA CRIAÇÃO DE GRÁFICOS ---
+
+def generate_csv_from_dll(run_directory: str, save_directory: str, run_number: str):
+    """
+    Gera um arquivo CSV a partir de dados brutos de uma RUN utilizando uma biblioteca C (.dll).
+
+    Esta função carrega 'libshared_read_object.dll', chama a função 'read_struct'
+    passando os diretórios e o número da RUN, e retorna o resultado.
+    """
+    # O ideal é que a DLL esteja no mesmo diretório do executável,
+    # os.getcwd() garante que o caminho seja relativo ao local de execução.
+    dll_path = os.path.join(os.getcwd(), "libshared_read_object.dll")
+
+    # 1. Verificar se a DLL existe no diretório do projeto
+    if not os.path.exists(dll_path):
+        QMessageBox.critical(
+            None,
+            "Erro Crítico",
+            f"A biblioteca 'libshared_read_object.dll' não foi encontrada no diretório principal do projeto:\n{dll_path}"
+        )
+        return
+
+    try:
+        # 2. Carregar a biblioteca C
+        c_functions = ctypes.CDLL(dll_path)
+
+        # 3. Chamar a função 'read_struct' da DLL, passando os argumentos como bytes
+        c_functions.read_struct(
+            run_directory.encode("utf8"),
+            save_directory.encode("utf8"),
+            int(run_number)
+        )
+
+        # 4. Se a função em C for executada sem erros, exibe uma mensagem de sucesso.
+        QMessageBox.information(
+            None,
+            "Sucesso",
+            f"O arquivo CSV para a RUN {run_number} foi gerado com sucesso em:\n{save_directory}"
+        )
+
+    except FileNotFoundError:
+        # Este erro é uma segunda verificação, caso a primeira falhe.
+        QMessageBox.critical(
+            None,
+            "Erro Crítico",
+            f"A biblioteca 'libshared_read_object.dll' não foi encontrada."
+        )
+    except Exception as e:
+        # Captura outras exceções que podem ocorrer ao chamar a função da DLL
+        error_details = traceback.format_exc()
+        QMessageBox.critical(
+            None,
+            "Erro ao Gerar CSV",
+            f"Ocorreu um erro ao chamar a função da biblioteca C:\n{e}\n\nDetalhes:\n{error_details}"
+        )
+
+
+# --- FUNÇÕES AUXILIARES PARA CRIAÇÃO DE GRÁFICOS EM EXCEL ---
 
 def _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, time_col, value_col, title, y_title):
-    """Cria um gráfico de linha (série temporal) comparativo."""
+    """Cria um gráfico de linha (série temporal) comparativo no Excel."""
     chart = workbook.add_chart({'type': 'line'})
     row_offset = 2
     for i, run_name in enumerate(run_names):
@@ -32,7 +89,7 @@ def _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run,
     return chart
 
 def _create_scatter_chart(workbook, data_sheet_name, run_names, rows_per_run, x_col, y_col, title, x_title, y_title):
-    """Cria um gráfico de dispersão (XY) comparativo."""
+    """Cria um gráfico de dispersão (XY) comparativo no Excel."""
     chart = workbook.add_chart({'type': 'scatter'})
     row_offset = 2
     for i, run_name in enumerate(run_names):
@@ -53,9 +110,8 @@ def _create_scatter_chart(workbook, data_sheet_name, run_names, rows_per_run, x_
     chart.set_size({'width': 720, 'height': 420})
     return chart
 
-# A função _create_bar_chart foi removida por não ser mais necessária.
 
-# --- FUNÇÃO PRINCIPAL DE EXPORTAÇÃO ---
+# --- FUNÇÃO PRINCIPAL DE EXPORTAÇÃO PARA EXCEL ---
 
 def export_to_dashboard_excel(runs: list[RunData], save_path: str, metrics_df: pd.DataFrame, variations_df: pd.DataFrame, filter_settings: dict, setup_info: dict, observations: str):
     """Exporta um relatório avançado para Excel com Dashboard, dados prontos para IA e instruções."""
@@ -138,9 +194,7 @@ def export_to_dashboard_excel(runs: list[RunData], save_path: str, metrics_df: p
             charts['rpm'] = _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, 'B', 'D', 'RPM Comparativo', 'RPM')
             charts['acel'] = _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, 'B', 'E', 'Aceleração Comparativa', 'Aceleração (m/s²)')
             charts['dist'] = _create_timeseries_chart(workbook, data_sheet_name, run_names, rows_per_run, 'B', 'F', 'Distância Percorrida', 'Distância (m)')
-            # CORREÇÃO: Eixos do gráfico de CVT (RPM x Velocidade) invertidos conforme solicitado.
             charts['rpm_vel'] = _create_scatter_chart(workbook, data_sheet_name, run_names, rows_per_run, 'C', 'D', 'Relação RPM x Velocidade', 'Velocidade (km/h)', 'RPM')
-            # O gráfico de barras foi removido.
             
             # 4. Montar o Dashboard
             sheet3.write('A1', 'Dashboard de Análise de Desempenho', workbook.add_format({'bold': True, 'font_size': 20, 'font_color': '#333333'}))
@@ -157,17 +211,3 @@ def export_to_dashboard_excel(runs: list[RunData], save_path: str, metrics_df: p
     except Exception as e:
         error_details = traceback.format_exc()
         QMessageBox.critical(None, "Erro ao Exportar Dashboard", f"Ocorreu um erro inesperado: {e}\n\nDetalhes:\n{error_details}")
-
-def generate_processed_csv(run_directory: str, run_number: str, save_directory: str):
-    """Função legada para exportar um único CSV processado."""
-    run_files = glob.glob(os.path.join(run_directory, f"*RUN{run_number}*.csv"))
-    if not run_files:
-        QMessageBox.warning(None, "Arquivo não Encontrado", f"Nenhum arquivo encontrado para a RUN {run_number} em '{run_directory}'.")
-        return
-    try:
-        df = pd.read_csv(run_files[0])
-        save_path = os.path.join(save_directory, f"RUN{run_number}_processed.csv")
-        df.to_csv(save_path, index=False)
-        QMessageBox.information(None, "Sucesso", f"Arquivo CSV processado e salvo em:\n{save_path}")
-    except Exception as e:
-        QMessageBox.critical(None, "Erro ao Gerar CSV", f"Ocorreu um erro inesperado: {str(e)}")

@@ -120,6 +120,7 @@ class MainWindow(QMainWindow):
     def _connect_signals(self):
         self.nav_panel.view_selected.connect(self.view_stack.setCurrentIndex)
         self.controls_panel.analysis_requested.connect(self.start_analysis)
+        self.controls_panel.csv_generation_requested.connect(self.generate_csv_file)
         
         self.app_state.data_loaded.connect(self.update_statistics_view)
         self.app_state.status_message_changed.connect(self.statusBar().showMessage)
@@ -167,7 +168,32 @@ class MainWindow(QMainWindow):
         self.app_state.update_analysis_results(runs)
         self.view_stack.setCurrentIndex(1)
         self.app_state.status_message_changed.emit("Dados carregados. Filtros são independentes por gráfico.", 5000)
-    
+
+    def generate_csv_file(self, csv_data: dict):
+        """Lida com a solicitação de geração de um arquivo CSV processado."""
+        run_dir = csv_data.get("run_dir")
+        run_num = csv_data.get("run_num")
+        save_dir = csv_data.get("save_dir")
+
+        if not all([run_dir, run_num, save_dir]):
+            QMessageBox.warning(self, "Campos Inválidos", "Todos os campos para geração de CSV devem ser preenchidos.")
+            return
+
+        if not run_num.isnumeric():
+            QMessageBox.warning(self, "Número da RUN Inválido", "O campo 'Número da RUN' deve ser um valor numérico.")
+            return
+
+        self.app_state.status_message_changed.emit(f"Gerando CSV para a RUN {run_num}...", 3000)
+        QApplication.processEvents()
+
+        # Chama a função que usa a DLL
+        file_service.generate_csv_from_dll(
+            run_directory=run_dir,
+            save_directory=save_dir,
+            run_number=run_num
+        )
+        self.app_state.status_message_changed.emit("Processamento de CSV concluído.", 5000)
+
     def _populate_table(self, table_widget: QTableWidget, df: pd.DataFrame):
         table_widget.clear()
         if df.empty:
@@ -274,7 +300,6 @@ class MainWindow(QMainWindow):
                 setup_info=setup_info,
                 observations=observations
             )
-            # A mensagem de sucesso agora vem da própria função de exportação
 
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Não foi possível gerar o Dashboard Excel.\nErro: {e}\n\n{traceback.format_exc()}")

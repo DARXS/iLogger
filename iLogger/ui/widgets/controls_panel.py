@@ -133,7 +133,6 @@ class ControlsPanel(QWidget):
             QMessageBox.warning(self, "Aviso", "Nenhum arquivo selecionado para análise.")
             return
 
-        # O painel de filtros não está mais aqui, então não precisamos buscar suas configurações
         analysis_data = { "file_paths": file_paths }
         self.analysis_requested.emit(analysis_data)
         

@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mangue-logger"
+version = "7.0.0"
+description = "Análise de telemetria do Mangue Baja (RPM, velocidade, CVT, fases, relatórios)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "scipy>=1.11", "pandas>=2.0"]
+
+[project.optional-dependencies]
+gui = ["PyQt6>=6.5", "pyqtgraph>=0.13.3"]
+reports = ["xlsxwriter>=3.1", "reportlab>=4.0", "matplotlib>=3.7"]
+dev = ["pytest>=8", "pytest-qt>=4.4", "hypothesis>=6.100", "ruff>=0.5", "mypy>=1.10", "pandas-stubs", "pyinstaller>=6"]
+
+[project.scripts]
+mangue-logger = "mangue_logger.cli:main"
+
+[project.gui-scripts]
+mangue-logger-gui = "mangue_logger.presentation.app:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mangue_logger"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501", "RUF001", "RUF002", "RUF003", "SIM105", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+# código de UI/exporters migrado da v6: estilo denso mantido até ser refatorado painel a painel
+"src/mangue_logger/presentation/panels/analysis_view.py" = ["E701", "E702", "E703", "E401", "E741", "E731", "F841", "F401", "I001", "SIM", "B", "UP", "RUF"]
+"src/mangue_logger/presentation/main_window.py" = ["E701", "E702", "E703", "E741", "E731", "I001", "SIM", "RUF"]
+"src/mangue_logger/presentation/controls_panel.py" = ["E701", "E702", "E703", "E741", "E731", "SIM", "RUF"]
+"src/mangue_logger/presentation/theme.py" = ["E702", "RUF012"]
+"src/mangue_logger/infrastructure/exporters/*.py" = ["E402", "E701", "E702", "E741", "F841", "I001", "SIM", "B", "UP", "RUF", "F401"]
+"tests/*" = ["B", "RUF", "E702", "E701", "E401", "SIM115", "SIM117", "E731", "I001"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_unused_ignores = true
+files = ["src/mangue_logger/domain", "src/mangue_logger/application"]

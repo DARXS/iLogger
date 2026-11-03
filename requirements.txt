@@ -1,0 +1,10 @@
+# Instalação recomendada: pip install -e ".[gui,reports]"   (veja pyproject.toml)
+# Este arquivo existe só por compatibilidade com o fluxo antigo.
+numpy>=1.24
+scipy>=1.11
+pandas>=2.0
+PyQt6>=6.5
+pyqtgraph>=0.13.3
+xlsxwriter>=3.1
+reportlab>=4.0
+matplotlib>=3.7

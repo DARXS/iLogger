@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "name": "Mangue Baja (padrão)",
+  "sensor": {
+    "tire_radius_m": 0.29,
+    "disc_holes": 12,
+    "window_samples": 10,
+    "window_dt_s": 0.05,
+    "rpm_pulses_per_rev": 1.0
+  },
+  "rules": {
+    "hard_brake_ms2": -8.0,
+    "hard_accel_ms2": 6.0,
+    "rpm_util_good": 0.6,
+    "rpm_spike": 500.0,
+    "rpm_spike_count": 10,
+    "anomaly_z": 3.5,
+    "phase_accel_thr": 1.0,
+    "phase_brake_thr": -1.0,
+    "cvt_hold_cv_warn_pct": 8.0,
+    "cvt_min_speed_kmh": 5.0
+  },
+  "power_band_rpm": null
+}

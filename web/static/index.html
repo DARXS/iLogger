@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mangue Logger — Telemetria</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M4 4h18l6 12-6 12H4l6-12z' fill='%23e10600'/></svg>">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand"><span class="brand-mark"></span><span class="brand-name">MANGUE<b>LOGGER</b></span><span class="brand-sub">TELEMETRY</span></div>
+      <div id="runbar" class="runbar"></div>
+      <div class="top-actions">
+        <button class="btn" id="btn-load" title="Carregar CSVs (ou arraste para a janela)">＋ Carregar</button>
+        <button class="btn ghost" id="btn-filter" title="Filtro de sinal">⚗ Filtro</button>
+        <input type="file" id="file-input" accept=".csv,.json" multiple hidden>
+      </div>
+    </header>
+    <nav id="nav"></nav>
+    <main id="view" tabindex="-1"></main>
+    <aside id="drawer" class="drawer" aria-hidden="true"></aside>
+  </div>
+  <div id="dropzone"><div><b>Solte os CSVs aqui</b><span>f1 = RPM · f2 = velocidade (configurável no perfil)</span></div></div>
+  <script type="module" src="/static/js/main.js"></script>
+</body>
+</html>
